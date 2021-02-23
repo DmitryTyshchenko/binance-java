@@ -1,0 +1,18 @@
+package ztysdmy.binance.lsv;
+
+
+import org.junit.Test;
+
+import ztysdmy.binance.BinanceApi;
+import ztysdmy.binance.http.HttpBinanceApi;
+
+public class BinanceHttpTest {
+
+	@Test
+	public void getPrices() throws Exception {
+		
+		BinanceApi api = new HttpBinanceApi();
+		System.out.println(api.price("BTCBUSD"));
+		
+	}
+}
