@@ -1,6 +1,8 @@
 package ztysdmy.binance.lsv;
 
 
+import java.util.HashMap;
+
 import org.junit.Test;
 
 import ztysdmy.binance.BinanceApi;
@@ -17,7 +19,7 @@ public class BinanceHttpTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public void getAllPrices() throws Exception {
 		
 		BinanceApi api = new HttpBinanceApi();
@@ -25,11 +27,23 @@ public class BinanceHttpTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public void allOrders() throws Exception {
 		try {
-		BinanceApi api = new HttpBinanceApi("asaf", "asd22");
-		//System.out.println(api.allOrders("BTCBUSD"));
+		BinanceApi api = new HttpBinanceApi("",
+				"");
+		System.out.println(api.allOrders("BTCBUSD", null).toString());
+		} catch (BinanceException e) {
+			System.out.println(e.getBinanceMessage());
+		}
+	}
+	
+	//@Test
+	public void openOrders() throws Exception {
+		try {
+		BinanceApi api = new HttpBinanceApi("",
+				"");
+		System.out.println(api.openOrders("BTCBUSD",null).toString());
 		} catch (BinanceException e) {
 			System.out.println(e.getBinanceMessage());
 		}

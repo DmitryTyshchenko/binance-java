@@ -9,11 +9,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 
 import ztysdmy.binance.BinanceApi;
 import ztysdmy.binance.http.BinanceException.BinanceExceptionData;
+import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
 import static ztysdmy.binance.http.HttpUtility.*;
 import static ztysdmy.binance.http.HMACEncoding.*;
@@ -55,32 +57,47 @@ public class HttpBinanceApi implements BinanceApi {
 	}
 
 	@Override
-	public String allOrders(String symbol) {
+	public List<Order> allOrders(String symbol, Map<String, String> params) {
 		var queryEndpoint = baseURL + "allOrders";
-		var params = new HashMap<String, String>();
+		if (params == null) {
+			params = new HashMap<String, String>();
+		}
 		params.put("symbol", symbol);
-		params.put("timestamp", String.valueOf(new Date().getTime()));
+		params.computeIfAbsent("timestamp", k -> String.valueOf(new Date().getTime()));
 		var concatedParams = concatParams(params);
 		var encodedParams = helper(() -> encode(secretKey, concatedParams));
 		params.put("signature", encodedParams);
 		var request = SIGNEDGET(queryEndpoint, params);
 		var response = SEND(request);
-		return response.body();
+		return Arrays.asList(new Gson().fromJson(response.body(), Order[].class));
 	}
 
-	private HttpRequest GET(String queryEndpoint, HashMap<String, String> params) {
+	@Override
+	public List<Order> openOrders(String symbol, Map<String, String> params) {
+		var queryEndpoint = baseURL + "openOrders";
+		if (params == null) {
+			params = new HashMap<String, String>();
+		}
+		params.put("symbol", symbol);
+		params.computeIfAbsent("timestamp", k -> String.valueOf(new Date().getTime()));
+		var concatedParams = concatParams(params);
+		var encodedParams = helper(() -> encode(secretKey, concatedParams));
+		params.put("signature", encodedParams);
+		var request = SIGNEDGET(queryEndpoint, params);
+		var response = SEND(request);
+		return Arrays.asList(new Gson().fromJson(response.body(), Order[].class));
+	}
+
+	private HttpRequest GET(String queryEndpoint, Map<String, String> params) {
 
 		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params))
 				.timeout(Duration.ofSeconds(timeout)).GET().build());
 	}
 
-	private HttpRequest SIGNEDGET(String queryEndpoint, HashMap<String, String> params) {
+	private HttpRequest SIGNEDGET(String queryEndpoint, Map<String, String> params) {
 
-		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params))
-				.header("X-MBX-APIKEY", apiKey)
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.timeout(Duration.ofSeconds(timeout))
-				.GET()
+		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params)).header("X-MBX-APIKEY", apiKey)
+				.header("Content-Type", "application/x-www-form-urlencoded").timeout(Duration.ofSeconds(timeout)).GET()
 				.build());
 	}
 
