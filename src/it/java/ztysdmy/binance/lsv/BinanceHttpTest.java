@@ -15,4 +15,12 @@ public class BinanceHttpTest {
 		System.out.println(api.price("BTCBUSD"));
 		
 	}
+	
+	@Test
+	public void getAllPrices() throws Exception {
+		
+		BinanceApi api = new HttpBinanceApi();
+		System.out.println(api.allPrices());
+		
+	}
 }

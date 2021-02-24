@@ -2,6 +2,8 @@ package ztysdmy.binance.model;
 
 import java.math.BigDecimal;
 
+import com.google.gson.Gson;
+
 public class PriceInfo {
 
 	private final String symbol;
@@ -22,7 +24,7 @@ public class PriceInfo {
 	
 	@Override
 	public String toString() {
-		return "Symbol: "+symbol+", Price: "+price.toString();
+		return new Gson().toJson(this);
 	}
 	
 }
