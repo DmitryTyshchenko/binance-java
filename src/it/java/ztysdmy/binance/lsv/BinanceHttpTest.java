@@ -8,7 +8,7 @@ import ztysdmy.binance.http.HttpBinanceApi;
 
 public class BinanceHttpTest {
 
-	@Test
+	//@Test
 	public void getPrices() throws Exception {
 		
 		BinanceApi api = new HttpBinanceApi();
@@ -16,11 +16,18 @@ public class BinanceHttpTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public void getAllPrices() throws Exception {
 		
 		BinanceApi api = new HttpBinanceApi();
 		//System.out.println(api.allPrices());
 		
+	}
+	
+	@Test
+	public void allOrders() throws Exception {
+		
+		BinanceApi api = new HttpBinanceApi();
+		System.out.println(api.allOrders("BTCBUSD"));
 	}
 }

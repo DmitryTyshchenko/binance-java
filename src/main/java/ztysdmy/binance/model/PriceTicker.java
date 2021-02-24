@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 
 import com.google.gson.Gson;
 
-public class PriceInfo {
+public class PriceTicker {
 
 	private final String symbol;
 	private final BigDecimal price;
 	
-	public PriceInfo(String symbol, BigDecimal price) {
+	public PriceTicker(String symbol, BigDecimal price) {
 		this.symbol = symbol;
 		this.price = price;
 	}

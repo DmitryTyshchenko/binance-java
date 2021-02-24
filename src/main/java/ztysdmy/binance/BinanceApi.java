@@ -2,7 +2,7 @@ package ztysdmy.binance;
 
 import java.util.List;
 
-import ztysdmy.binance.model.PriceInfo;
+import ztysdmy.binance.model.PriceTicker;
 
 public interface BinanceApi {
 
@@ -10,14 +10,14 @@ public interface BinanceApi {
 	 * Returns latest price for all symbols.
 	 * @return
 	 */
-	List<PriceInfo> allPrices();
+	List<PriceTicker> allPrices();
 	
 	/**
 	 * Returns latest price for a symbol.
-	 * @param ticket (BTCBUSD, etc)
+	 * @param symbol (BTCBUSD, etc)
 	 * @return
 	 */
-	PriceInfo price(String ticket);
+	PriceTicker price(String symbol);
 	
-	String allOrders();
+	String allOrders(String symbol);
 }

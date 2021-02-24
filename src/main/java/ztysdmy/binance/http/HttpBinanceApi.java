@@ -6,6 +6,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,8 +14,9 @@ import com.google.gson.Gson;
 
 import ztysdmy.binance.BinanceApi;
 import ztysdmy.binance.http.BinanceException.BinanceExceptionData;
-import ztysdmy.binance.model.PriceInfo;
+import ztysdmy.binance.model.PriceTicker;
 import static ztysdmy.binance.http.HttpUtility.*;
+import static ztysdmy.binance.http.HMACEncoding.*;
 
 public class HttpBinanceApi implements BinanceApi {
 
@@ -23,43 +25,60 @@ public class HttpBinanceApi implements BinanceApi {
 	// timeout in seconds
 	private int timeout = 2;
 
+	private String apiKey = "";
+	private String secretKey = "";
+
+	public HttpBinanceApi() {
+	}
+
+	public HttpBinanceApi(String apiKey, String secretKey) {
+		this.apiKey = apiKey;
+		this.secretKey = secretKey;
+	}
+
 	@Override
-	public PriceInfo price(String ticket) {
-
+	public PriceTicker price(String symbol) {
 		var queryEndpoint = baseURL + "ticker/price";
-
 		var params = new HashMap<String, String>();
-		params.put("symbol", ticket);
-
+		params.put("symbol", symbol);
 		var request = GET(queryEndpoint, params);
-
 		var response = SEND(request);
-
-		return new Gson().fromJson(response.body(), PriceInfo.class);
+		return new Gson().fromJson(response.body(), PriceTicker.class);
 	}
 
 	@Override
-	public List<PriceInfo> allPrices() {
-
+	public List<PriceTicker> allPrices() {
 		var queryEndpoint = baseURL + "ticker/price";
-
 		var request = GET(queryEndpoint, new HashMap<>());
-
 		var response = SEND(request);
-
-		return Arrays.asList(new Gson().fromJson(response.body(), PriceInfo[].class));
+		return Arrays.asList(new Gson().fromJson(response.body(), PriceTicker[].class));
 	}
 
 	@Override
-	public String allOrders() {
-		// TODO Auto-generated method stub
-		return null;
+	public String allOrders(String symbol) {
+		var queryEndpoint = baseURL + "allOrders";
+		var params = new HashMap<String, String>();
+		params.put("symbol", symbol);
+		params.put("timestamp", String.valueOf(new Date().getTime()));
+		var concatedParams = concatParams(params);
+		var encodedParams = helper(() -> encode(secretKey, concatedParams));
+		params.put("signature", encodedParams);
+		var request = SIGNEDGET(queryEndpoint, params);
+		var response = SEND(request);
+		return response.body();
 	}
-	
+
 	private HttpRequest GET(String queryEndpoint, HashMap<String, String> params) {
 
 		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params))
 				.timeout(Duration.ofSeconds(timeout)).GET().build());
+	}
+
+	private HttpRequest SIGNEDGET(String queryEndpoint, HashMap<String, String> params) {
+
+		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params)).header("X-MBX-APIKEY", apiKey)
+				.header("Content-Type", "application/x-www-form-urlencoded").timeout(Duration.ofSeconds(timeout)).GET()
+				.build());
 	}
 
 	private HttpResponse<String> SEND(HttpRequest request) {
@@ -81,7 +100,5 @@ public class HttpBinanceApi implements BinanceApi {
 			throw new RuntimeException(e);
 		}
 	}
-
-	
 
 }
