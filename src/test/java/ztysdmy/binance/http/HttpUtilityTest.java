@@ -12,7 +12,7 @@ public class HttpUtilityTest {
 		var params = new HashMap<String, String>();
 		params.put("param1", "value1");
 		params.put("param2", "value2");
-		var result = HttpUtility.createUriStringWithParams("test", params);
-		Assert.assertTrue(result.equals("test?param1=value1&param2=value2"));
+		var result = HttpUtility.concatParams(params);
+		Assert.assertTrue(result.equals("param1=value1&param2=value2"));
 	}
 }

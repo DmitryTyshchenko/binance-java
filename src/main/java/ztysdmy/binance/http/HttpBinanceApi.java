@@ -50,6 +50,12 @@ public class HttpBinanceApi implements BinanceApi {
 		return Arrays.asList(new Gson().fromJson(response.body(), PriceInfo[].class));
 	}
 
+	@Override
+	public String allOrders() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	private HttpRequest GET(String queryEndpoint, HashMap<String, String> params) {
 
 		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params))
@@ -75,5 +81,7 @@ public class HttpBinanceApi implements BinanceApi {
 			throw new RuntimeException(e);
 		}
 	}
+
+	
 
 }

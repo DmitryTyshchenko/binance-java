@@ -11,12 +11,11 @@ class HttpUtility {
 	}
 
 	static URI buildUri(String baseUri, Map<String, String> params) throws URISyntaxException {
-		var uri = params.size() > 0 ? createUriStringWithParams(baseUri, params) : baseUri;
+		var uri = params.size() > 0 ? baseUri + "?" + concatParams(params) : baseUri;
 		return new URI(uri);
 	}
 
-	static String createUriStringWithParams(String baseUri, Map<String, String> params) {
-		var uri = baseUri + "?" + params.entrySet().stream().map(Object::toString).collect(joining("&"));
-		return uri;
+	static String concatParams(Map<String, String> params) {
+		return params.entrySet().stream().map(Object::toString).collect(joining("&"));
 	}
 }

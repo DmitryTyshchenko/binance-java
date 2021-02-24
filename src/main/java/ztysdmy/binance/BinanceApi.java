@@ -18,4 +18,6 @@ public interface BinanceApi {
 	 * @return
 	 */
 	PriceInfo price(String ticket);
+	
+	String allOrders();
 }
