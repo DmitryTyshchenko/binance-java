@@ -12,6 +12,7 @@ import java.util.List;
 import com.google.gson.Gson;
 
 import ztysdmy.binance.BinanceApi;
+import ztysdmy.binance.http.BinanceException.BinanceExceptionData;
 import ztysdmy.binance.model.PriceInfo;
 import static ztysdmy.binance.http.HttpUtility.*;
 
@@ -56,7 +57,11 @@ public class HttpBinanceApi implements BinanceApi {
 	}
 
 	private HttpResponse<String> SEND(HttpRequest request) {
-		return helper(() -> HttpClient.newBuilder().build().send(request, BodyHandlers.ofString()));
+		var response = helper(() -> HttpClient.newBuilder().build().send(request, BodyHandlers.ofString()));
+		if (response.statusCode() != 200) {
+			throw new BinanceException(new Gson().fromJson(response.body(), BinanceExceptionData.class));
+		}
+		return response;
 	}
 
 	private static interface Action<T> {

@@ -20,7 +20,7 @@ public class BinanceHttpTest {
 	public void getAllPrices() throws Exception {
 		
 		BinanceApi api = new HttpBinanceApi();
-		System.out.println(api.allPrices());
+		//System.out.println(api.allPrices());
 		
 	}
 }
