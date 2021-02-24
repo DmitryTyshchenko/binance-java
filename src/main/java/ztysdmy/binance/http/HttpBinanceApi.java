@@ -76,8 +76,11 @@ public class HttpBinanceApi implements BinanceApi {
 
 	private HttpRequest SIGNEDGET(String queryEndpoint, HashMap<String, String> params) {
 
-		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params)).header("X-MBX-APIKEY", apiKey)
-				.header("Content-Type", "application/x-www-form-urlencoded").timeout(Duration.ofSeconds(timeout)).GET()
+		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params))
+				.header("X-MBX-APIKEY", apiKey)
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.timeout(Duration.ofSeconds(timeout))
+				.GET()
 				.build());
 	}
 
