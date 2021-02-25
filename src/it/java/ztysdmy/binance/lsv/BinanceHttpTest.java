@@ -27,7 +27,7 @@ public class BinanceHttpTest {
 		try {
 		BinanceApi api = new HttpBinanceApi();
 		var params = new HashMap<String, String>();
-		params.put("limit", "2");
+		params.put("limit", "10");
 		System.out.println(api.trades("BTCBUSD", params).toString());
 		} catch (RequestLimitException e) {
 			
