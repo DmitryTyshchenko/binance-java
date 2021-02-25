@@ -2,9 +2,7 @@ package ztysdmy.binance.model;
 
 import java.math.BigDecimal;
 
-import com.google.gson.Gson;
-
-public class Order {
+public class Order extends BinanceObject {
 
 	private String symbol;
 	private int orderId;
@@ -133,8 +131,4 @@ public class Order {
 		this.origQuoteOrderQty = origQuoteOrderQty;
 	}
 	
-	@Override
-	public String toString() {
-		return new Gson().toJson(this);
-	}
 }

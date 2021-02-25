@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import ztysdmy.binance.BinanceApi;
 import ztysdmy.binance.BinanceException;
@@ -19,6 +21,8 @@ import ztysdmy.binance.BinanceException.BinanceExceptionData;
 import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
+import ztysdmy.binance.model.Trade;
+
 import static ztysdmy.binance.http.HttpUtility.*;
 import static ztysdmy.binance.http.HMACEncoding.*;
 
@@ -38,6 +42,26 @@ public class HttpBinanceApi implements BinanceApi {
 	public HttpBinanceApi(String apiKey, String secretKey) {
 		this.apiKey = apiKey;
 		this.secretKey = secretKey;
+	}
+
+	@Override
+	public Long checkServerTime() throws RequestLimitException, BinanceException {
+		var queryEndpoint = baseURL + "time";
+		var params = new HashMap<String, String>();
+		var response = createUnsignedRequestAndSend(queryEndpoint, params);
+		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
+		return Long.valueOf(jsonObject.get("serverTime").getAsString());
+	}
+
+	@Override
+	public List<Trade> trades(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException {
+		var queryEndpoint = baseURL + "trades";
+		if (params == null) {
+			params = new HashMap<String, String>();
+		}
+		params.put("symbol", symbol);
+		var response = createUnsignedRequestAndSend(queryEndpoint, params);
+		return Arrays.asList(new Gson().fromJson(response.body(), Trade[].class));
 	}
 
 	@Override

@@ -5,9 +5,25 @@ import java.util.Map;
 
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
+import ztysdmy.binance.model.Trade;
 
 public interface BinanceApi {
 
+	/**
+	 * Test connectivity to the Rest API and get the current server time.
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	
+	Long checkServerTime() throws RequestLimitException, BinanceException;
+	
+	/**
+	 * Recent trades list
+	 */
+	
+	List<Trade> trades(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException; 
+	
 	/**
 	 * Returns latest price for all symbols.
 	 * @return

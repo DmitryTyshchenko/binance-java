@@ -2,9 +2,7 @@ package ztysdmy.binance.model;
 
 import java.math.BigDecimal;
 
-import com.google.gson.Gson;
-
-public class PriceTicker {
+public class PriceTicker extends BinanceObject{
 
 	private final String symbol;
 	private final BigDecimal price;
@@ -21,10 +19,4 @@ public class PriceTicker {
 	public BigDecimal getPrice() {
 		return price;
 	}
-	
-	@Override
-	public String toString() {
-		return new Gson().toJson(this);
-	}
-	
 }

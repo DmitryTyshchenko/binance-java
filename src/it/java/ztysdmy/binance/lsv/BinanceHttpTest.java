@@ -12,7 +12,29 @@ import ztysdmy.binance.http.HttpBinanceApi;
 
 public class BinanceHttpTest {
 
+	//@Test
+	public void checkServerTime() throws Exception {
+		try {
+		BinanceApi api = new HttpBinanceApi();
+		System.out.println(api.checkServerTime());
+		} catch (RequestLimitException e) {
+			
+		}
+	}
+	
 	@Test
+	public void testTrades() throws Exception {
+		try {
+		BinanceApi api = new HttpBinanceApi();
+		var params = new HashMap<String, String>();
+		params.put("limit", "2");
+		System.out.println(api.trades("BTCBUSD", params).toString());
+		} catch (RequestLimitException e) {
+			
+		}
+	}
+	
+	//@Test
 	public void getPrices() throws Exception {
 		try {
 		BinanceApi api = new HttpBinanceApi();
