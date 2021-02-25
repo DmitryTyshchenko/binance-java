@@ -3,6 +3,7 @@ package ztysdmy.binance;
 import java.util.List;
 import java.util.Map;
 
+import ztysdmy.binance.model.AggTradeData;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
 import ztysdmy.binance.model.Trade;
@@ -23,6 +24,18 @@ public interface BinanceApi {
 	 */
 	
 	List<Trade> trades(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException; 
+	
+	/**
+	 * Get compressed, aggregate trades. Trades that fill at the time, from the same taker order, 
+	 * with the same price will have the quantity aggregated.
+	 * @param symbol
+	 * @param params
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	
+	List<AggTradeData> aggTrades(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException;
 	
 	/**
 	 * Returns latest price for all symbols.

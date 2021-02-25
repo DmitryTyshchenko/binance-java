@@ -1,6 +1,5 @@
 package ztysdmy.binance.lsv;
 
-
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -12,65 +11,74 @@ import ztysdmy.binance.http.HttpBinanceApi;
 
 public class BinanceHttpTest {
 
-	//@Test
+	// @Test
 	public void checkServerTime() throws Exception {
 		try {
-		BinanceApi api = new HttpBinanceApi();
-		System.out.println(api.checkServerTime());
+			BinanceApi api = new HttpBinanceApi();
+			System.out.println(api.checkServerTime());
 		} catch (RequestLimitException e) {
-			
+
 		}
 	}
-	
-	@Test
+
+	// @Test
 	public void testTrades() throws Exception {
 		try {
-		BinanceApi api = new HttpBinanceApi();
-		var params = new HashMap<String, String>();
-		params.put("limit", "10");
-		System.out.println(api.trades("BTCBUSD", params).toString());
+			BinanceApi api = new HttpBinanceApi();
+			var params = new HashMap<String, String>();
+			params.put("limit", "10");
+			System.out.println(api.trades("BTCBUSD", params).toString());
 		} catch (RequestLimitException e) {
-			
+
 		}
 	}
-	
-	//@Test
+
+	@Test
+	public void testAggTrades() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi();
+			var params = new HashMap<String, String>();
+			System.out.println(api.aggTrades("BTCBUSD", params).toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
+
+	// @Test
 	public void getPrices() throws Exception {
 		try {
-		BinanceApi api = new HttpBinanceApi();
-		System.out.println(api.price("BTCBUSD"));
+			BinanceApi api = new HttpBinanceApi();
+			System.out.println(api.price("BTCBUSD"));
 		} catch (RequestLimitException e) {
-			
+
 		}
 	}
-	
-	//@Test
+
+	// @Test
 	public void getAllPrices() throws Exception {
-		
+
 		BinanceApi api = new HttpBinanceApi();
-		//System.out.println(api.allPrices());
-		
+		// System.out.println(api.allPrices());
+
 	}
-	
-	//@Test
+
+	// @Test
 	public void allOrders() throws Exception {
 		try {
-		BinanceApi api = new HttpBinanceApi("",
-				"");
-		System.out.println(api.allOrders("BTCBUSD", null).toString());
+			BinanceApi api = new HttpBinanceApi("", "");
+			System.out.println(api.allOrders("BTCBUSD", null).toString());
 		} catch (BinanceException e) {
 			System.out.println(e.getBinanceMessage());
 		}
 	}
-	
-	//@Test
+
+	// @Test
 	public void openOrders() throws Exception {
 		try {
-		BinanceApi api = new HttpBinanceApi("",
-				"");
-		System.out.println(api.openOrders("BTCBUSD",null).toString());
+			BinanceApi api = new HttpBinanceApi("", "");
+			System.out.println(api.openOrders("BTCBUSD", null).toString());
 		} catch (RequestLimitException e) {
-			
+
 		}
 	}
 }

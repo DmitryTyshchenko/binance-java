@@ -19,6 +19,7 @@ import ztysdmy.binance.BinanceApi;
 import ztysdmy.binance.BinanceException;
 import ztysdmy.binance.BinanceException.BinanceExceptionData;
 import ztysdmy.binance.RequestLimitException;
+import ztysdmy.binance.model.AggTradeData;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
 import ztysdmy.binance.model.Trade;
@@ -54,7 +55,8 @@ public class HttpBinanceApi implements BinanceApi {
 	}
 
 	@Override
-	public List<Trade> trades(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException {
+	public List<Trade> trades(String symbol, Map<String, String> params)
+			throws RequestLimitException, BinanceException {
 		var queryEndpoint = baseURL + "trades";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -164,6 +166,17 @@ public class HttpBinanceApi implements BinanceApi {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public List<AggTradeData> aggTrades(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException {
+		var queryEndpoint = baseURL + "aggTrades";
+		if (params == null) {
+			params = new HashMap<String, String>();
+		}
+		params.put("symbol", symbol);
+		var response = createUnsignedRequestAndSend(queryEndpoint, params);
+		return Arrays.asList(new Gson().fromJson(response.body(), AggTradeData[].class));
 	}
 
 }
