@@ -45,17 +45,22 @@ public class HttpBinanceApi implements BinanceApi {
 		var queryEndpoint = baseURL + "ticker/price";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var request = GET(queryEndpoint, params);
-		var response = SEND(request);
+		var response = createUnsignedRequestAndSend(queryEndpoint, params);
 		return new Gson().fromJson(response.body(), PriceTicker.class);
 	}
 
 	@Override
 	public List<PriceTicker> allPrices() throws RequestLimitException {
 		var queryEndpoint = baseURL + "ticker/price";
-		var request = GET(queryEndpoint, new HashMap<>());
-		var response = SEND(request);
+		var response = createUnsignedRequestAndSend(queryEndpoint, new HashMap<>());
 		return Arrays.asList(new Gson().fromJson(response.body(), PriceTicker[].class));
+	}
+
+	private HttpResponse<String> createUnsignedRequestAndSend(String queryEndpoint, Map<String, String> params)
+			throws RequestLimitException {
+		var request = GET(queryEndpoint, params);
+		var response = SEND(request);
+		return response;
 	}
 
 	@Override
@@ -71,17 +76,18 @@ public class HttpBinanceApi implements BinanceApi {
 		return Arrays.asList(new Gson().fromJson(response.body(), Order[].class));
 	}
 
-	private Map<String, String> addTimeStampIfAbsentAndSignRequest(Map<String, String> params) throws RequestLimitException {
-		
+	private Map<String, String> addTimeStampIfAbsentAndSignRequest(Map<String, String> params)
+			throws RequestLimitException {
+
 		params.computeIfAbsent("timestamp", k -> String.valueOf(new Date().getTime()));
 		var concatedParams = concatParams(params);
 		var encodedParams = helper(() -> encode(secretKey, concatedParams));
 		params.put("signature", encodedParams);
 		return params;
 	}
-	
+
 	@Override
-	public List<Order> openOrders(String symbol, Map<String, String> params) throws RequestLimitException  {
+	public List<Order> openOrders(String symbol, Map<String, String> params) throws RequestLimitException {
 		var queryEndpoint = baseURL + "openOrders";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -108,12 +114,12 @@ public class HttpBinanceApi implements BinanceApi {
 
 	private HttpResponse<String> SEND(HttpRequest request) throws RequestLimitException {
 		var response = helper(() -> HttpClient.newBuilder().build().send(request, BodyHandlers.ofString()));
-		
-		if (response.statusCode()==429||response.statusCode()==418) {
-			//TODO get retry After from header
+
+		if (response.statusCode() == 429 || response.statusCode() == 418) {
+			// TODO get retry After from header
 			throw new RequestLimitException(response.statusCode(), 10000);
 		}
-		
+
 		if (response.statusCode() != 200) {
 			throw new BinanceException(new Gson().fromJson(response.body(), BinanceExceptionData.class));
 		}
@@ -130,7 +136,7 @@ public class HttpBinanceApi implements BinanceApi {
 		} catch (RequestLimitException e) {
 			throw e;
 		}
-		
+
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
