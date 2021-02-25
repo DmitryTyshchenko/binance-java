@@ -1,7 +1,8 @@
-package ztysdmy.binance.http;
+package ztysdmy.binance;
 
 public class BinanceException extends RuntimeException {
-
+	
+	private static final long serialVersionUID = 1L;
 	BinanceExceptionData exeptionData;
 	
 	public BinanceException(BinanceExceptionData exceptionData) {

@@ -6,17 +6,20 @@ import java.util.HashMap;
 import org.junit.Test;
 
 import ztysdmy.binance.BinanceApi;
-import ztysdmy.binance.http.BinanceException;
+import ztysdmy.binance.BinanceException;
+import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.http.HttpBinanceApi;
 
 public class BinanceHttpTest {
 
 	@Test
 	public void getPrices() throws Exception {
-		
+		try {
 		BinanceApi api = new HttpBinanceApi();
 		System.out.println(api.price("BTCBUSD"));
-		
+		} catch (RequestLimitException e) {
+			
+		}
 	}
 	
 	//@Test
@@ -44,8 +47,8 @@ public class BinanceHttpTest {
 		BinanceApi api = new HttpBinanceApi("",
 				"");
 		System.out.println(api.openOrders("BTCBUSD",null).toString());
-		} catch (BinanceException e) {
-			System.out.println(e.getBinanceMessage());
+		} catch (RequestLimitException e) {
+			
 		}
 	}
 }
