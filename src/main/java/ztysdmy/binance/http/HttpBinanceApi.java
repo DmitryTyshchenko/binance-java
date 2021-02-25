@@ -65,15 +65,21 @@ public class HttpBinanceApi implements BinanceApi {
 			params = new HashMap<String, String>();
 		}
 		params.put("symbol", symbol);
-		params.computeIfAbsent("timestamp", k -> String.valueOf(new Date().getTime()));
-		var concatedParams = concatParams(params);
-		var encodedParams = helper(() -> encode(secretKey, concatedParams));
-		params.put("signature", encodedParams);
+		params = addTimeStampIfAbsentAndSignRequest(params);
 		var request = SIGNEDGET(queryEndpoint, params);
 		var response = SEND(request);
 		return Arrays.asList(new Gson().fromJson(response.body(), Order[].class));
 	}
 
+	private Map<String, String> addTimeStampIfAbsentAndSignRequest(Map<String, String> params) throws RequestLimitException {
+		
+		params.computeIfAbsent("timestamp", k -> String.valueOf(new Date().getTime()));
+		var concatedParams = concatParams(params);
+		var encodedParams = helper(() -> encode(secretKey, concatedParams));
+		params.put("signature", encodedParams);
+		return params;
+	}
+	
 	@Override
 	public List<Order> openOrders(String symbol, Map<String, String> params) throws RequestLimitException  {
 		var queryEndpoint = baseURL + "openOrders";
@@ -81,10 +87,7 @@ public class HttpBinanceApi implements BinanceApi {
 			params = new HashMap<String, String>();
 		}
 		params.put("symbol", symbol);
-		params.computeIfAbsent("timestamp", k -> String.valueOf(new Date().getTime()));
-		var concatedParams = concatParams(params);
-		var encodedParams = helper(() -> encode(secretKey, concatedParams));
-		params.put("signature", encodedParams);
+		params = addTimeStampIfAbsentAndSignRequest(params);
 		var request = SIGNEDGET(queryEndpoint, params);
 		var response = SEND(request);
 		return Arrays.asList(new Gson().fromJson(response.body(), Order[].class));
