@@ -8,6 +8,7 @@ import ztysdmy.binance.BinanceApi;
 import ztysdmy.binance.BinanceException;
 import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.http.HttpBinanceApi;
+import ztysdmy.binance.model.KlineInterval;
 
 public class BinanceHttpTest {
 
@@ -33,7 +34,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testAggTrades() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
@@ -44,6 +45,17 @@ public class BinanceHttpTest {
 		}
 	}
 
+	@Test
+	public void testKlines() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi();
+			var params = new HashMap<String, String>();
+			System.out.println(api.klines("BTCBUSD", KlineInterval.fifteen_minutes, params).toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
+	
 	// @Test
 	public void getPrices() throws Exception {
 		try {

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import ztysdmy.binance.model.AggTradeData;
+import ztysdmy.binance.model.KLine;
+import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
 import ztysdmy.binance.model.Trade;
@@ -36,6 +38,17 @@ public interface BinanceApi {
 	 */
 	
 	List<AggTradeData> aggTrades(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException;
+	
+	/**
+	 * Kline/candlestick bars for a symbol. Klines are uniquely identified by their open time.
+	 * @param symbol
+	 * @param interval
+	 * @param params
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	List<KLine> klines(String symbol, KlineInterval interval, Map<String, String> params) throws RequestLimitException, BinanceException;
 	
 	/**
 	 * Returns latest price for all symbols.

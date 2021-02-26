@@ -5,6 +5,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import ztysdmy.binance.BinanceException;
 import ztysdmy.binance.BinanceException.BinanceExceptionData;
 import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.model.AggTradeData;
+import ztysdmy.binance.model.KLine;
+import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
 import ztysdmy.binance.model.Trade;
@@ -177,6 +180,26 @@ public class HttpBinanceApi implements BinanceApi {
 		params.put("symbol", symbol);
 		var response = createUnsignedRequestAndSend(queryEndpoint, params);
 		return Arrays.asList(new Gson().fromJson(response.body(), AggTradeData[].class));
+	}
+
+	@Override
+	public List<KLine> klines(String symbol, KlineInterval interval, Map<String, String> params) throws RequestLimitException, BinanceException {
+		var queryEndpoint = baseURL + "klines";
+		if (params == null) {
+			params = new HashMap<String, String>();
+		}
+		params.put("symbol", symbol);
+		params.put("interval", interval.value());
+		var response = createUnsignedRequestAndSend(queryEndpoint, params);
+		var arrays = new Gson().fromJson(response.body(), String[][].class);
+		
+		var result = new ArrayList<KLine>();
+		
+		for (String[] array:arrays) {
+			result.add(KLine.fromStringArray(array));
+		}
+		
+		return result;
 	}
 
 }

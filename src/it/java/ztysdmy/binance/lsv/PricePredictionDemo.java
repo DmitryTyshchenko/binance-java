@@ -51,7 +51,8 @@ public class PricePredictionDemo {
 		System.out.println("Number of Sellers "+numberOfSellers);
 		System.out.println("Avg Sell Price "+avgSellPrice);
 		System.out.println("Current Price "+api.price("BTCBUSD"));
-		Thread.currentThread().sleep(2000);
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		Thread.currentThread().sleep(5000);
 		}
 	}
 	
