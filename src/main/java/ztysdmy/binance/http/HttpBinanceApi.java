@@ -152,9 +152,21 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 
 		if (response.statusCode() != 200) {
-			throw new BinanceException(new Gson().fromJson(response.body(), BinanceExceptionData.class));
+			throw new BinanceException(extractExceptionData(response.statusCode(), response.body()));
 		}
 		return response;
+	}
+
+	private BinanceExceptionData extractExceptionData(int code, String body) {
+		try {
+			// in case of Binance specific exception
+			return new Gson().fromJson(body, BinanceExceptionData.class);
+		} catch (Exception e) {
+			var result = new BinanceExceptionData();
+			result.setCode(code);
+			result.setMsg(body);
+			return result;
+		}
 	}
 
 	private static interface Action<T> {
