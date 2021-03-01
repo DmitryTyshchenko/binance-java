@@ -34,11 +34,21 @@ public class BinanceHttpTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testTickerPriceChangeStatistics() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
 			System.out.println(api.tickerPriceChangeStatistics("BTCBUSD").toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
+
+	@Test
+	public void testBookTicker() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi();
+			System.out.println(api.bookTicker("BTCBUSD").toString());
 		} catch (RequestLimitException e) {
 
 		}

@@ -11,9 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import ztysdmy.binance.BinanceApi;
@@ -24,6 +24,7 @@ import ztysdmy.binance.model.AvgPrice;
 import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
+import ztysdmy.binance.model.OrderBookTicker;
 import ztysdmy.binance.model.PriceTicker;
 import ztysdmy.binance.model.TickerPriceChangeStatistics;
 import ztysdmy.binance.model.Trade;
@@ -61,6 +62,7 @@ public class HttpBinanceApi implements BinanceApi {
 	@Override
 	public List<Trade> trades(String symbol, Map<String, String> params)
 			throws RequestLimitException, BinanceException {
+		Objects.nonNull(symbol);
 		var queryEndpoint = baseURL + "trades";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -72,6 +74,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public PriceTicker price(String symbol) throws RequestLimitException, BinanceException {
+		Objects.nonNull(symbol);
 		var queryEndpoint = baseURL + "ticker/price";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
@@ -95,6 +98,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public List<Order> allOrders(String symbol, Map<String, String> params) throws RequestLimitException {
+		Objects.nonNull(symbol);
 		var queryEndpoint = baseURL + "allOrders";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -118,6 +122,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public List<Order> openOrders(String symbol, Map<String, String> params) throws RequestLimitException {
+		Objects.nonNull(symbol);
 		var queryEndpoint = baseURL + "openOrders";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -186,6 +191,7 @@ public class HttpBinanceApi implements BinanceApi {
 	@Override
 	public List<AggTradeData> aggTrades(String symbol, Map<String, String> params)
 			throws RequestLimitException, BinanceException {
+		Objects.nonNull(symbol);
 		var queryEndpoint = baseURL + "aggTrades";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -198,6 +204,8 @@ public class HttpBinanceApi implements BinanceApi {
 	@Override
 	public List<KLine> klines(String symbol, KlineInterval interval, Map<String, String> params)
 			throws RequestLimitException, BinanceException {
+		Objects.nonNull(symbol);
+		Objects.nonNull(interval);
 		var queryEndpoint = baseURL + "klines";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -218,6 +226,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public AvgPrice avgPrice(String symbol) throws RequestLimitException, BinanceException {
+		Objects.nonNull(symbol);
 		var queryEndpoint = baseURL + "avgPrice";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
@@ -228,11 +237,22 @@ public class HttpBinanceApi implements BinanceApi {
 	@Override
 	public TickerPriceChangeStatistics tickerPriceChangeStatistics(String symbol)
 			throws RequestLimitException, BinanceException {
+		Objects.nonNull(symbol);
 		var queryEndpoint = baseURL + "ticker/24hr";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
 		var response = createUnsignedRequestAndSend(queryEndpoint, params);
 		return new Gson().fromJson(response.body(), TickerPriceChangeStatistics.class);
+	}
+
+	@Override
+	public OrderBookTicker bookTicker(String symbol) throws RequestLimitException, BinanceException {
+		Objects.nonNull(symbol);
+		var queryEndpoint = baseURL + "ticker/bookTicker";
+		var params = new HashMap<String, String>();
+		params.put("symbol", symbol);
+		var response = createUnsignedRequestAndSend(queryEndpoint, params);
+		return new Gson().fromJson(response.body(), OrderBookTicker.class);
 	}
 
 }
