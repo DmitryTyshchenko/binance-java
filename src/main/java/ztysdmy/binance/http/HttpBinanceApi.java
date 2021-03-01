@@ -18,7 +18,6 @@ import com.google.gson.JsonParser;
 
 import ztysdmy.binance.BinanceApi;
 import ztysdmy.binance.BinanceException;
-import ztysdmy.binance.BinanceException.BinanceExceptionData;
 import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.model.AggTradeData;
 import ztysdmy.binance.model.AvgPrice;
@@ -55,7 +54,7 @@ public class HttpBinanceApi implements BinanceApi {
 		var queryEndpoint = baseURL + "time";
 		var params = new HashMap<String, String>();
 		var response = createUnsignedRequestAndSend(queryEndpoint, params);
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
+		var jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
 		return Long.valueOf(jsonObject.get("serverTime").getAsString());
 	}
 
@@ -152,20 +151,19 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 
 		if (response.statusCode() != 200) {
-			throw new BinanceException(extractExceptionData(response.statusCode(), response.body()));
+			throw createExteption(response.statusCode(), response.body());
 		}
 		return response;
 	}
 
-	private BinanceExceptionData extractExceptionData(int code, String body) {
+	private BinanceException createExteption(int code, String body) {
 		try {
 			// in case of Binance specific exception
-			return new Gson().fromJson(body, BinanceExceptionData.class);
+			var jsonObject = JsonParser.parseString(body).getAsJsonObject();
+			return new BinanceException(jsonObject.get("code").getAsInt(), 
+					jsonObject.get("msg").getAsString());
 		} catch (Exception e) {
-			var result = new BinanceExceptionData();
-			result.setCode(code);
-			result.setMsg(body);
-			return result;
+			return new BinanceException(code, body);
 		}
 	}
 

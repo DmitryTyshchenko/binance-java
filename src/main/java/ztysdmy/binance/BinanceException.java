@@ -3,18 +3,20 @@ package ztysdmy.binance;
 public class BinanceException extends RuntimeException {
 	
 	private static final long serialVersionUID = 1L;
-	BinanceExceptionData exeptionData;
+	int code;
+	String binanaceMeddage;
 	
-	public BinanceException(BinanceExceptionData exceptionData) {
-		this.exeptionData = exceptionData;
+	public BinanceException(int code, String binanceMessage) {
+		this.code = code;
+		this.binanaceMeddage = binanceMessage;
 	}
 	
 	public int getCode() {
-		return exeptionData.getCode();
+		return this.code;
 	}
 	
 	public String getBinanceMessage() {
-		return exeptionData.getMsg();
+		return this.binanaceMeddage;
 	}
 	
 	@Override
@@ -25,26 +27,5 @@ public class BinanceException extends RuntimeException {
 	@Override
 	public String getLocalizedMessage() {
 		return this.getBinanceMessage();
-	}
-	
-	public static class BinanceExceptionData {
-	
-		private static final long serialVersionUID = 1L;
-		int code;
-		String msg;
-		
-		public int getCode() {
-			return code;
-		}
-		public void setCode(int code) {
-			this.code = code;
-		}
-		public String getMsg() {
-			return msg;
-		}
-		public void setMsg(String msg) {
-			this.msg = msg;
-		}
-		
 	}
 }
