@@ -9,6 +9,7 @@ import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
+import ztysdmy.binance.model.TickerPriceChangeStatistics;
 import ztysdmy.binance.model.Trade;
 
 public interface BinanceApi {
@@ -60,6 +61,15 @@ public interface BinanceApi {
 	 * @throws BinanceException
 	 */
 	AvgPrice avgPrice(String symbol) throws RequestLimitException, BinanceException;
+	
+	/**
+	 * 24 hour rolling window price change statistics.
+	 * @param symbol
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	TickerPriceChangeStatistics tickerPriceChangeStatistics(String symbol) throws RequestLimitException, BinanceException;
 	
 	/**
 	 * Returns latest price for all symbols.

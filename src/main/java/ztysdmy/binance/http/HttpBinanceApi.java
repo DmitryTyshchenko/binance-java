@@ -26,6 +26,7 @@ import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.PriceTicker;
+import ztysdmy.binance.model.TickerPriceChangeStatistics;
 import ztysdmy.binance.model.Trade;
 
 import static ztysdmy.binance.http.HttpUtility.*;
@@ -71,7 +72,7 @@ public class HttpBinanceApi implements BinanceApi {
 	}
 
 	@Override
-	public PriceTicker price(String symbol) throws RequestLimitException {
+	public PriceTicker price(String symbol) throws RequestLimitException, BinanceException {
 		var queryEndpoint = baseURL + "ticker/price";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
@@ -173,7 +174,8 @@ public class HttpBinanceApi implements BinanceApi {
 	}
 
 	@Override
-	public List<AggTradeData> aggTrades(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException {
+	public List<AggTradeData> aggTrades(String symbol, Map<String, String> params)
+			throws RequestLimitException, BinanceException {
 		var queryEndpoint = baseURL + "aggTrades";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -184,7 +186,8 @@ public class HttpBinanceApi implements BinanceApi {
 	}
 
 	@Override
-	public List<KLine> klines(String symbol, KlineInterval interval, Map<String, String> params) throws RequestLimitException, BinanceException {
+	public List<KLine> klines(String symbol, KlineInterval interval, Map<String, String> params)
+			throws RequestLimitException, BinanceException {
 		var queryEndpoint = baseURL + "klines";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -193,23 +196,33 @@ public class HttpBinanceApi implements BinanceApi {
 		params.put("interval", interval.value());
 		var response = createUnsignedRequestAndSend(queryEndpoint, params);
 		var arrays = new Gson().fromJson(response.body(), String[][].class);
-		
+
 		var result = new ArrayList<KLine>();
-		
-		for (String[] array:arrays) {
+
+		for (String[] array : arrays) {
 			result.add(KLine.fromStringArray(array));
 		}
-		
+
 		return result;
 	}
 
 	@Override
 	public AvgPrice avgPrice(String symbol) throws RequestLimitException, BinanceException {
 		var queryEndpoint = baseURL + "avgPrice";
-		var	params = new HashMap<String, String>();
+		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
 		var response = createUnsignedRequestAndSend(queryEndpoint, params);
 		return new Gson().fromJson(response.body(), AvgPrice.class);
+	}
+
+	@Override
+	public TickerPriceChangeStatistics tickerPriceChangeStatistics(String symbol)
+			throws RequestLimitException, BinanceException {
+		var queryEndpoint = baseURL + "ticker/24hr";
+		var params = new HashMap<String, String>();
+		params.put("symbol", symbol);
+		var response = createUnsignedRequestAndSend(queryEndpoint, params);
+		return new Gson().fromJson(response.body(), TickerPriceChangeStatistics.class);
 	}
 
 }

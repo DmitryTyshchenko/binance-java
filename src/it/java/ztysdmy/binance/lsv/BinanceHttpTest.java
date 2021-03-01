@@ -35,6 +35,17 @@ public class BinanceHttpTest {
 	}
 
 	@Test
+	public void testTickerPriceChangeStatistics() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi();
+			System.out.println(api.tickerPriceChangeStatistics("BTCBUSD").toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
+
+	
+	//@Test
 	public void testAvgPrice() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
