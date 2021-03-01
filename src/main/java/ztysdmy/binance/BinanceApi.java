@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import ztysdmy.binance.model.AggTradeData;
+import ztysdmy.binance.model.AvgPrice;
 import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
@@ -49,6 +50,16 @@ public interface BinanceApi {
 	 * @throws BinanceException
 	 */
 	List<KLine> klines(String symbol, KlineInterval interval, Map<String, String> params) throws RequestLimitException, BinanceException;
+	
+	/**
+	 * Current average price for a symbol.
+	 * 
+	 * @param symbol
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	AvgPrice avgPrice(String symbol) throws RequestLimitException, BinanceException;
 	
 	/**
 	 * Returns latest price for all symbols.

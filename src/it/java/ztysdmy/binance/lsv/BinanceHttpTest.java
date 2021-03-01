@@ -34,7 +34,17 @@ public class BinanceHttpTest {
 		}
 	}
 
-	//@Test
+	@Test
+	public void testAvgPrice() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi();
+			System.out.println(api.avgPrice("BTCBUSD").toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
+
+	// @Test
 	public void testAggTrades() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
@@ -45,7 +55,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testKlines() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
@@ -55,7 +65,7 @@ public class BinanceHttpTest {
 
 		}
 	}
-	
+
 	// @Test
 	public void getPrices() throws Exception {
 		try {

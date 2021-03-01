@@ -21,6 +21,7 @@ import ztysdmy.binance.BinanceException;
 import ztysdmy.binance.BinanceException.BinanceExceptionData;
 import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.model.AggTradeData;
+import ztysdmy.binance.model.AvgPrice;
 import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
@@ -200,6 +201,15 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 		
 		return result;
+	}
+
+	@Override
+	public AvgPrice avgPrice(String symbol) throws RequestLimitException, BinanceException {
+		var queryEndpoint = baseURL + "avgPrice";
+		var	params = new HashMap<String, String>();
+		params.put("symbol", symbol);
+		var response = createUnsignedRequestAndSend(queryEndpoint, params);
+		return new Gson().fromJson(response.body(), AvgPrice.class);
 	}
 
 }
