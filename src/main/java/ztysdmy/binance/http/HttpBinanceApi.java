@@ -68,8 +68,7 @@ public class HttpBinanceApi implements BinanceApi {
 			params = new HashMap<String, String>();
 		}
 		params.put("symbol", symbol);
-		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
-		return Arrays.asList(responseBodyToObject(response.body(), Trade[].class));
+		return Arrays.asList(executeUnsignedRequest(queryEndpoint, params, Trade[].class));
 	}
 
 	@Override
@@ -78,15 +77,14 @@ public class HttpBinanceApi implements BinanceApi {
 		var queryEndpoint = baseURL + "ticker/price";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
-		return responseBodyToObject(response.body(), PriceTicker.class);
+		return executeUnsignedRequest(queryEndpoint, params, PriceTicker.class);
 	}
 
 	@Override
 	public List<PriceTicker> allPrices() throws RequestLimitException {
 		var queryEndpoint = baseURL + "ticker/price";
-		var response = createUnsignedGetRequestAndSend(queryEndpoint, new HashMap<>());
-		return Arrays.asList(responseBodyToObject(response.body(), PriceTicker[].class));
+		return Arrays.asList(executeUnsignedRequest(queryEndpoint, new HashMap<String, String>(), 
+				PriceTicker[].class));
 	}
 
 	private HttpResponse<String> createUnsignedGetRequestAndSend(String queryEndpoint, Map<String, String> params)
@@ -134,7 +132,7 @@ public class HttpBinanceApi implements BinanceApi {
 		return Arrays.asList(responseBodyToObject(response.body(), Order[].class));
 	}
 
-	private HttpRequest GET(String queryEndpoint, Map<String, String> params) throws RequestLimitException {
+	private HttpRequest GET(String queryEndpoint, Map<String, String> params) throws RequestLimitException  {
 
 		return helper(() -> HttpRequest.newBuilder()
 				.uri(buildUri(queryEndpoint, params))
@@ -196,20 +194,19 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public List<AggTradeData> aggTrades(String symbol, Map<String, String> params)
-			throws RequestLimitException, BinanceException {
+			throws RequestLimitException {
 		checkArguments(symbol);
 		var queryEndpoint = baseURL + "aggTrades";
 		if (params == null) {
 			params = new HashMap<String, String>();
 		}
 		params.put("symbol", symbol);
-		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
-		return Arrays.asList(responseBodyToObject(response.body(), AggTradeData[].class));
+		return Arrays.asList(executeUnsignedRequest(queryEndpoint, params, AggTradeData[].class));
 	}
 
 	@Override
 	public List<KLine> klines(String symbol, KlineInterval interval, Map<String, String> params)
-			throws RequestLimitException, BinanceException {
+			throws RequestLimitException {
 		checkArguments(symbol, interval);
 		var queryEndpoint = baseURL + "klines";
 		if (params == null) {
@@ -230,38 +227,35 @@ public class HttpBinanceApi implements BinanceApi {
 	}
 
 	@Override
-	public AvgPrice avgPrice(String symbol) throws RequestLimitException, BinanceException {
+	public AvgPrice avgPrice(String symbol) throws RequestLimitException {
 		checkArguments(symbol);
 		var queryEndpoint = baseURL + "avgPrice";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
-		return responseBodyToObject(response.body(), AvgPrice.class);
+		return executeUnsignedRequest(queryEndpoint, params, AvgPrice.class);
 	}
 
 	@Override
 	public TickerPriceChangeStatistics tickerPriceChangeStatistics(String symbol)
-			throws RequestLimitException, BinanceException {
+			throws RequestLimitException {
 		checkArguments(symbol);
 		var queryEndpoint = baseURL + "ticker/24hr";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
-		return responseBodyToObject(response.body(), TickerPriceChangeStatistics.class);
+		return executeUnsignedRequest(queryEndpoint, params, TickerPriceChangeStatistics.class);
 	}
 
 	@Override
-	public OrderBookTicker bookTicker(String symbol) throws RequestLimitException, BinanceException {
+	public OrderBookTicker bookTicker(String symbol) throws RequestLimitException {
 		checkArguments(symbol);
 		var queryEndpoint = baseURL + "ticker/bookTicker";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
-		return responseBodyToObject(response.body(), OrderBookTicker.class);
+		return executeUnsignedRequest(queryEndpoint, params, OrderBookTicker.class);
 	}
 
 	@Override
-	public Order order(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException {
+	public Order order(String symbol, Map<String, String> params) throws RequestLimitException {
 		checkArguments(symbol, params);
 
 		if (params.get("orderId") == null && params.get("origClientOrderId") == null) {
@@ -280,6 +274,13 @@ public class HttpBinanceApi implements BinanceApi {
 
 	private <T> T responseBodyToObject(String body, Class<T> clazz) {
 		return new Gson().fromJson(body, clazz);
+	}
+	
+	private <T> T executeUnsignedRequest(String queryEndpoint, Map<String, String> params, Class<T> clazz) 
+			throws RequestLimitException {
+		
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
+		return responseBodyToObject(response.body(), clazz);
 	}
 	
 	private void checkArguments(Object... args) {
