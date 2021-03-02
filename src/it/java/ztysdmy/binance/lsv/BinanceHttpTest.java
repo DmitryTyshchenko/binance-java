@@ -115,7 +115,8 @@ public class BinanceHttpTest {
 		}
 	}
 
-	@Test
+	//"orderId":1798255236,"orderListId":-1,"clientOrderId":"and_64b9e6ef2fce4860a7a042c0ccbff529"
+	//@Test
 	public void openOrders() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi("", "");
@@ -124,4 +125,18 @@ public class BinanceHttpTest {
 
 		}
 	}
+	
+	@Test
+	public void testOrder() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi("", 
+					"");
+			var params = new HashMap<String, String>();
+			params.put("orderId", "1798255236");
+			System.out.println(api.order("BTCBUSD", params).toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
+
 }

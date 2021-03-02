@@ -110,4 +110,15 @@ public interface BinanceApi {
 	 * @return
 	 */
 	List<Order> openOrders(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException;
+	
+	/**
+	 * Query order
+	 * Either orderId or origClientOrderId must be sent.
+	 * @param symbol
+	 * @param params
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	Order order(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException;
 }

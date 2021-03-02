@@ -62,7 +62,7 @@ public class HttpBinanceApi implements BinanceApi {
 	@Override
 	public List<Trade> trades(String symbol, Map<String, String> params)
 			throws RequestLimitException, BinanceException {
-		Objects.nonNull(symbol);
+		checkArguments(symbol);
 		var queryEndpoint = baseURL + "trades";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -74,7 +74,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public PriceTicker price(String symbol) throws RequestLimitException, BinanceException {
-		Objects.nonNull(symbol);
+		checkArguments(symbol);
 		var queryEndpoint = baseURL + "ticker/price";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
@@ -98,7 +98,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public List<Order> allOrders(String symbol, Map<String, String> params) throws RequestLimitException {
-		Objects.nonNull(symbol);
+		checkArguments(symbol);
 		var queryEndpoint = baseURL + "allOrders";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -122,7 +122,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public List<Order> openOrders(String symbol, Map<String, String> params) throws RequestLimitException {
-		Objects.nonNull(symbol);
+		checkArguments(symbol);
 		var queryEndpoint = baseURL + "openOrders";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -156,17 +156,16 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 
 		if (response.statusCode() != 200) {
-			throw createExteption(response.statusCode(), response.body());
+			throw createException(response.statusCode(), response.body());
 		}
 		return response;
 	}
 
-	private BinanceException createExteption(int code, String body) {
+	private BinanceException createException(int code, String body) {
 		try {
 			// in case of Binance specific exception
 			var jsonObject = JsonParser.parseString(body).getAsJsonObject();
-			return new BinanceException(jsonObject.get("code").getAsInt(), 
-					jsonObject.get("msg").getAsString());
+			return new BinanceException(jsonObject.get("code").getAsInt(), jsonObject.get("msg").getAsString());
 		} catch (Exception e) {
 			return new BinanceException(code, body);
 		}
@@ -191,7 +190,7 @@ public class HttpBinanceApi implements BinanceApi {
 	@Override
 	public List<AggTradeData> aggTrades(String symbol, Map<String, String> params)
 			throws RequestLimitException, BinanceException {
-		Objects.nonNull(symbol);
+		checkArguments(symbol);
 		var queryEndpoint = baseURL + "aggTrades";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -204,8 +203,7 @@ public class HttpBinanceApi implements BinanceApi {
 	@Override
 	public List<KLine> klines(String symbol, KlineInterval interval, Map<String, String> params)
 			throws RequestLimitException, BinanceException {
-		Objects.nonNull(symbol);
-		Objects.nonNull(interval);
+		checkArguments(symbol, interval);
 		var queryEndpoint = baseURL + "klines";
 		if (params == null) {
 			params = new HashMap<String, String>();
@@ -226,7 +224,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public AvgPrice avgPrice(String symbol) throws RequestLimitException, BinanceException {
-		Objects.nonNull(symbol);
+		checkArguments(symbol);
 		var queryEndpoint = baseURL + "avgPrice";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
@@ -237,7 +235,7 @@ public class HttpBinanceApi implements BinanceApi {
 	@Override
 	public TickerPriceChangeStatistics tickerPriceChangeStatistics(String symbol)
 			throws RequestLimitException, BinanceException {
-		Objects.nonNull(symbol);
+		checkArguments(symbol);
 		var queryEndpoint = baseURL + "ticker/24hr";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
@@ -247,7 +245,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 	@Override
 	public OrderBookTicker bookTicker(String symbol) throws RequestLimitException, BinanceException {
-		Objects.nonNull(symbol);
+		checkArguments(symbol);
 		var queryEndpoint = baseURL + "ticker/bookTicker";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
@@ -255,4 +253,30 @@ public class HttpBinanceApi implements BinanceApi {
 		return new Gson().fromJson(response.body(), OrderBookTicker.class);
 	}
 
+	@Override
+	public Order order(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException {
+		checkArguments(symbol, params);
+
+		if (params.get("orderId") == null && params.get("origClientOrderId") == null) {
+
+			throw new IllegalArgumentException("Either orderId or origClientOrderId must be sent");
+		}
+
+		var queryEndpoint = baseURL + "order";
+
+		params.put("symbol", symbol);
+		params = addTimeStampIfAbsentAndSignRequest(params);
+		var request = SIGNEDGET(queryEndpoint, params);
+		var response = SEND(request);
+		return new Gson().fromJson(response.body(), Order.class);
+	}
+
+	private void checkArguments(Object... args) {
+		for (int i = 0; i < args.length; i++) {
+			Object arg = args[i];
+			if (Objects.isNull(arg)) {
+				throw new IllegalArgumentException(Integer.toString(i) + " argument is illegal. Should not be a NULL");
+			}
+		}
+	}
 }
