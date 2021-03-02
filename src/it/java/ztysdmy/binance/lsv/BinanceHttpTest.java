@@ -87,8 +87,8 @@ public class BinanceHttpTest {
 		}
 	}
 
-	// @Test
-	public void getPrices() throws Exception {
+	@Test
+	public void testPrice() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
 			System.out.println(api.price("BTCBUSD"));
@@ -126,7 +126,7 @@ public class BinanceHttpTest {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testOrder() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi("", 

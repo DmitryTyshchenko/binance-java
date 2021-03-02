@@ -54,7 +54,7 @@ public class HttpBinanceApi implements BinanceApi {
 	public Long checkServerTime() throws RequestLimitException, BinanceException {
 		var queryEndpoint = baseURL + "time";
 		var params = new HashMap<String, String>();
-		var response = createUnsignedRequestAndSend(queryEndpoint, params);
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
 		var jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
 		return Long.valueOf(jsonObject.get("serverTime").getAsString());
 	}
@@ -68,8 +68,8 @@ public class HttpBinanceApi implements BinanceApi {
 			params = new HashMap<String, String>();
 		}
 		params.put("symbol", symbol);
-		var response = createUnsignedRequestAndSend(queryEndpoint, params);
-		return Arrays.asList(new Gson().fromJson(response.body(), Trade[].class));
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
+		return Arrays.asList(responseBodyToObject(response.body(), Trade[].class));
 	}
 
 	@Override
@@ -78,18 +78,18 @@ public class HttpBinanceApi implements BinanceApi {
 		var queryEndpoint = baseURL + "ticker/price";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var response = createUnsignedRequestAndSend(queryEndpoint, params);
-		return new Gson().fromJson(response.body(), PriceTicker.class);
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
+		return responseBodyToObject(response.body(), PriceTicker.class);
 	}
 
 	@Override
 	public List<PriceTicker> allPrices() throws RequestLimitException {
 		var queryEndpoint = baseURL + "ticker/price";
-		var response = createUnsignedRequestAndSend(queryEndpoint, new HashMap<>());
-		return Arrays.asList(new Gson().fromJson(response.body(), PriceTicker[].class));
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, new HashMap<>());
+		return Arrays.asList(responseBodyToObject(response.body(), PriceTicker[].class));
 	}
 
-	private HttpResponse<String> createUnsignedRequestAndSend(String queryEndpoint, Map<String, String> params)
+	private HttpResponse<String> createUnsignedGetRequestAndSend(String queryEndpoint, Map<String, String> params)
 			throws RequestLimitException {
 		var request = GET(queryEndpoint, params);
 		var response = SEND(request);
@@ -107,7 +107,7 @@ public class HttpBinanceApi implements BinanceApi {
 		params = addTimeStampIfAbsentAndSignRequest(params);
 		var request = SIGNEDGET(queryEndpoint, params);
 		var response = SEND(request);
-		return Arrays.asList(new Gson().fromJson(response.body(), Order[].class));
+		return Arrays.asList(responseBodyToObject(response.body(), Order[].class));
 	}
 
 	private Map<String, String> addTimeStampIfAbsentAndSignRequest(Map<String, String> params)
@@ -131,19 +131,25 @@ public class HttpBinanceApi implements BinanceApi {
 		params = addTimeStampIfAbsentAndSignRequest(params);
 		var request = SIGNEDGET(queryEndpoint, params);
 		var response = SEND(request);
-		return Arrays.asList(new Gson().fromJson(response.body(), Order[].class));
+		return Arrays.asList(responseBodyToObject(response.body(), Order[].class));
 	}
 
 	private HttpRequest GET(String queryEndpoint, Map<String, String> params) throws RequestLimitException {
 
-		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params))
-				.timeout(Duration.ofSeconds(timeout)).GET().build());
+		return helper(() -> HttpRequest.newBuilder()
+				.uri(buildUri(queryEndpoint, params))
+				.timeout(Duration.ofSeconds(timeout))
+				.GET()
+				.build());
 	}
 
 	private HttpRequest SIGNEDGET(String queryEndpoint, Map<String, String> params) throws RequestLimitException {
 
-		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params)).header("X-MBX-APIKEY", apiKey)
-				.header("Content-Type", "application/x-www-form-urlencoded").timeout(Duration.ofSeconds(timeout)).GET()
+		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params))
+				.header("X-MBX-APIKEY", apiKey)
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.timeout(Duration.ofSeconds(timeout))
+				.GET()
 				.build());
 	}
 
@@ -171,6 +177,7 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 	}
 
+	@FunctionalInterface
 	private static interface Action<T> {
 		T doAction() throws Exception;
 	}
@@ -196,8 +203,8 @@ public class HttpBinanceApi implements BinanceApi {
 			params = new HashMap<String, String>();
 		}
 		params.put("symbol", symbol);
-		var response = createUnsignedRequestAndSend(queryEndpoint, params);
-		return Arrays.asList(new Gson().fromJson(response.body(), AggTradeData[].class));
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
+		return Arrays.asList(responseBodyToObject(response.body(), AggTradeData[].class));
 	}
 
 	@Override
@@ -210,15 +217,15 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 		params.put("symbol", symbol);
 		params.put("interval", interval.value());
-		var response = createUnsignedRequestAndSend(queryEndpoint, params);
-		var arrays = new Gson().fromJson(response.body(), String[][].class);
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
+	
+		var arrays = responseBodyToObject(response.body(), String[][].class);
 
 		var result = new ArrayList<KLine>();
 
 		for (String[] array : arrays) {
 			result.add(KLine.fromStringArray(array));
 		}
-
 		return result;
 	}
 
@@ -228,8 +235,8 @@ public class HttpBinanceApi implements BinanceApi {
 		var queryEndpoint = baseURL + "avgPrice";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var response = createUnsignedRequestAndSend(queryEndpoint, params);
-		return new Gson().fromJson(response.body(), AvgPrice.class);
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
+		return responseBodyToObject(response.body(), AvgPrice.class);
 	}
 
 	@Override
@@ -239,8 +246,8 @@ public class HttpBinanceApi implements BinanceApi {
 		var queryEndpoint = baseURL + "ticker/24hr";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var response = createUnsignedRequestAndSend(queryEndpoint, params);
-		return new Gson().fromJson(response.body(), TickerPriceChangeStatistics.class);
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
+		return responseBodyToObject(response.body(), TickerPriceChangeStatistics.class);
 	}
 
 	@Override
@@ -249,8 +256,8 @@ public class HttpBinanceApi implements BinanceApi {
 		var queryEndpoint = baseURL + "ticker/bookTicker";
 		var params = new HashMap<String, String>();
 		params.put("symbol", symbol);
-		var response = createUnsignedRequestAndSend(queryEndpoint, params);
-		return new Gson().fromJson(response.body(), OrderBookTicker.class);
+		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
+		return responseBodyToObject(response.body(), OrderBookTicker.class);
 	}
 
 	@Override
@@ -268,9 +275,13 @@ public class HttpBinanceApi implements BinanceApi {
 		params = addTimeStampIfAbsentAndSignRequest(params);
 		var request = SIGNEDGET(queryEndpoint, params);
 		var response = SEND(request);
-		return new Gson().fromJson(response.body(), Order.class);
+		return responseBodyToObject(response.body(), Order.class);
 	}
 
+	private <T> T responseBodyToObject(String body, Class<T> clazz) {
+		return new Gson().fromJson(body, clazz);
+	}
+	
 	private void checkArguments(Object... args) {
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
