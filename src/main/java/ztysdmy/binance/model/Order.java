@@ -12,10 +12,10 @@ public class Order extends BinanceObject {
 	private BigDecimal origQty;
     private BigDecimal executedQty;
     private BigDecimal cummulativeQuoteQty;
-    private String status;
-    private String timeInForce;
-    private String type;
-    private String side;
+    private OrderStatus status;
+    private TimeInForce timeInForce;
+    private OrderType type;
+    private OrderSide side;
     private BigDecimal stopPrice;
     private BigDecimal icebergQty;
     private long time;
@@ -70,28 +70,28 @@ public class Order extends BinanceObject {
 	public void setCummulativeQuoteQty(BigDecimal cummulativeQuoteQty) {
 		this.cummulativeQuoteQty = cummulativeQuoteQty;
 	}
-	public String getStatus() {
+	public OrderStatus getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(OrderStatus status) {
 		this.status = status;
 	}
-	public String getTimeInForce() {
+	public TimeInForce getTimeInForce() {
 		return timeInForce;
 	}
-	public void setTimeInForce(String timeInForce) {
+	public void setTimeInForce(TimeInForce timeInForce) {
 		this.timeInForce = timeInForce;
 	}
-	public String getType() {
+	public OrderType getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(OrderType type) {
 		this.type = type;
 	}
-	public String getSide() {
+	public OrderSide getSide() {
 		return side;
 	}
-	public void setSide(String side) {
+	public void setSide(OrderSide side) {
 		this.side = side;
 	}
 	public BigDecimal getStopPrice() {

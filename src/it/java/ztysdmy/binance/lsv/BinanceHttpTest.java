@@ -44,7 +44,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testBookTicker() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
@@ -115,7 +115,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	// @Test
+	@Test
 	public void openOrders() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi("", "");
