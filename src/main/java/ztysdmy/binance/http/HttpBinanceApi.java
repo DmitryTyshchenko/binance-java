@@ -1,10 +1,5 @@
 package ztysdmy.binance.http;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,13 +26,11 @@ import ztysdmy.binance.model.Trade;
 
 import static ztysdmy.binance.http.HttpUtility.*;
 import static ztysdmy.binance.http.HMACEncoding.*;
+import static ztysdmy.binance.http.Utility.*;
 
 public class HttpBinanceApi implements BinanceApi {
 
 	private String baseURL = "https://www.binance.com/api/v3/";
-
-	// timeout in seconds
-	private int timeout = 2;
 
 	private String apiKey = "";
 	private String secretKey = "";
@@ -87,12 +80,7 @@ public class HttpBinanceApi implements BinanceApi {
 				PriceTicker[].class));
 	}
 
-	private HttpResponse<String> createUnsignedGetRequestAndSend(String queryEndpoint, Map<String, String> params)
-			throws RequestLimitException {
-		var request = GET(queryEndpoint, params);
-		var response = SEND(request);
-		return response;
-	}
+	
 
 	@Override
 	public List<Order> allOrders(String symbol, Map<String, String> params) throws RequestLimitException {
@@ -103,7 +91,7 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 		params.put("symbol", symbol);
 		params = addTimeStampIfAbsentAndSignRequest(params);
-		var request = SIGNEDGET(queryEndpoint, params);
+		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params);
 		var response = SEND(request);
 		return Arrays.asList(responseBodyToObject(response.body(), Order[].class));
 	}
@@ -127,71 +115,14 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 		params.put("symbol", symbol);
 		params = addTimeStampIfAbsentAndSignRequest(params);
-		var request = SIGNEDGET(queryEndpoint, params);
+		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params);
 		var response = SEND(request);
 		return Arrays.asList(responseBodyToObject(response.body(), Order[].class));
 	}
 
-	private HttpRequest GET(String queryEndpoint, Map<String, String> params) throws RequestLimitException  {
-
-		return helper(() -> HttpRequest.newBuilder()
-				.uri(buildUri(queryEndpoint, params))
-				.timeout(Duration.ofSeconds(timeout))
-				.GET()
-				.build());
-	}
-
-	private HttpRequest SIGNEDGET(String queryEndpoint, Map<String, String> params) throws RequestLimitException {
-
-		return helper(() -> HttpRequest.newBuilder().uri(buildUri(queryEndpoint, params))
-				.header("X-MBX-APIKEY", apiKey)
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.timeout(Duration.ofSeconds(timeout))
-				.GET()
-				.build());
-	}
-
-	private HttpResponse<String> SEND(HttpRequest request) throws RequestLimitException {
-		var response = helper(() -> HttpClient.newBuilder().build().send(request, BodyHandlers.ofString()));
-
-		if (response.statusCode() == 429 || response.statusCode() == 418) {
-			// TODO get retry After from header
-			throw new RequestLimitException(response.statusCode(), 10000);
-		}
-
-		if (response.statusCode() != 200) {
-			throw createException(response.statusCode(), response.body());
-		}
-		return response;
-	}
-
-	private BinanceException createException(int code, String body) {
-		try {
-			// in case of Binance specific exception
-			var jsonObject = JsonParser.parseString(body).getAsJsonObject();
-			return new BinanceException(jsonObject.get("code").getAsInt(), jsonObject.get("msg").getAsString());
-		} catch (Exception e) {
-			return new BinanceException(code, body);
-		}
-	}
-
-	@FunctionalInterface
-	private static interface Action<T> {
-		T doAction() throws Exception;
-	}
-
-	private <T> T helper(Action<T> a) throws RequestLimitException {
-		try {
-			return a.doAction();
-		} catch (RequestLimitException e) {
-			throw e;
-		}
-
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
+	
+	
+	
 	@Override
 	public List<AggTradeData> aggTrades(String symbol, Map<String, String> params)
 			throws RequestLimitException {
@@ -267,7 +198,7 @@ public class HttpBinanceApi implements BinanceApi {
 
 		params.put("symbol", symbol);
 		params = addTimeStampIfAbsentAndSignRequest(params);
-		var request = SIGNEDGET(queryEndpoint, params);
+		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params);
 		var response = SEND(request);
 		return responseBodyToObject(response.body(), Order.class);
 	}
