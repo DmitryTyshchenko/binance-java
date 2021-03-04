@@ -9,6 +9,8 @@ import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.OrderBookTicker;
+import ztysdmy.binance.model.OrderSide;
+import ztysdmy.binance.model.OrderType;
 import ztysdmy.binance.model.PriceTicker;
 import ztysdmy.binance.model.TickerPriceChangeStatistics;
 import ztysdmy.binance.model.Trade;
@@ -121,4 +123,17 @@ public interface BinanceApi {
 	 * @throws BinanceException
 	 */
 	Order order(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException;
+	
+	/**
+	 * Send in a new order.
+	 * @param symbol
+	 * @param orderSide
+	 * @param orderType
+	 * @param params
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	
+	Order newOrder(String symbol, OrderSide orderSide, OrderType orderType, Map<String, String> params) throws RequestLimitException, BinanceException;
 }

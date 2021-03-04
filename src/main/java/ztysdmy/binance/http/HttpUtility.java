@@ -32,7 +32,8 @@ class HttpUtility {
 		return params.entrySet().stream().map(Object::toString).collect(joining("&"));
 	}
 
-	static HttpRequest REQUEST(String queryEndpoint, Map<String, String> headers, Map<String, String> params)
+	static HttpRequest REQUEST(String queryEndpoint, Map<String, String> headers, 
+			Map<String, String> params, RequestMethod requestMethod)
 			throws RequestLimitException {
 
 		Action<HttpRequest> buildRequest = () -> {
@@ -44,7 +45,7 @@ class HttpUtility {
 					requestBuilder = requestBuilder.header(entry.getKey(), entry.getValue());
 				}
 			}
-			return requestBuilder.GET().build();
+			return requestMethod.builderWithMethod().apply(requestBuilder).build();
 		};
 
 		return helper(() -> buildRequest.doAction());
@@ -76,7 +77,7 @@ class HttpUtility {
 
 	static HttpResponse<String> createUnsignedGetRequestAndSend(String queryEndpoint, Map<String, String> params)
 			throws RequestLimitException {
-		var request = REQUEST(queryEndpoint, null, params);
+		var request = REQUEST(queryEndpoint, null, params, RequestMethod.GET);
 		var response = SEND(request);
 		return response;
 	}

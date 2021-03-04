@@ -9,6 +9,7 @@ import ztysdmy.binance.BinanceException;
 import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.http.HttpBinanceApi;
 import ztysdmy.binance.model.KlineInterval;
+import ztysdmy.binance.model.OrderResponse;
 
 public class BinanceHttpTest {
 
@@ -89,12 +90,8 @@ public class BinanceHttpTest {
 
 	@Test
 	public void testPrice() throws Exception {
-		try {
-			BinanceApi api = new HttpBinanceApi();
-			System.out.println(api.price("BTCBUSD"));
-		} catch (RequestLimitException e) {
-
-		}
+		BinanceApi api = new HttpBinanceApi();
+		System.out.println(api.price("BTCBUSD"));
 	}
 
 	// @Test

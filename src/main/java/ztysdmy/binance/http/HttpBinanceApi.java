@@ -20,6 +20,9 @@ import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
 import ztysdmy.binance.model.OrderBookTicker;
+import ztysdmy.binance.model.OrderResponse;
+import ztysdmy.binance.model.OrderSide;
+import ztysdmy.binance.model.OrderType;
 import ztysdmy.binance.model.PriceTicker;
 import ztysdmy.binance.model.TickerPriceChangeStatistics;
 import ztysdmy.binance.model.Trade;
@@ -80,8 +83,6 @@ public class HttpBinanceApi implements BinanceApi {
 				PriceTicker[].class));
 	}
 
-	
-
 	@Override
 	public List<Order> allOrders(String symbol, Map<String, String> params) throws RequestLimitException {
 		checkArguments(symbol);
@@ -91,7 +92,7 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 		params.put("symbol", symbol);
 		params = addTimeStampIfAbsentAndSignRequest(params);
-		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params);
+		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.GET);
 		var response = SEND(request);
 		return Arrays.asList(responseBodyToObject(response.body(), Order[].class));
 	}
@@ -115,12 +116,10 @@ public class HttpBinanceApi implements BinanceApi {
 		}
 		params.put("symbol", symbol);
 		params = addTimeStampIfAbsentAndSignRequest(params);
-		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params);
+		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.GET);
 		var response = SEND(request);
 		return Arrays.asList(responseBodyToObject(response.body(), Order[].class));
 	}
-
-	
 	
 	
 	@Override
@@ -146,7 +145,6 @@ public class HttpBinanceApi implements BinanceApi {
 		params.put("symbol", symbol);
 		params.put("interval", interval.value());
 		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
-	
 		var arrays = responseBodyToObject(response.body(), String[][].class);
 
 		var result = new ArrayList<KLine>();
@@ -193,12 +191,10 @@ public class HttpBinanceApi implements BinanceApi {
 
 			throw new IllegalArgumentException("Either orderId or origClientOrderId must be sent");
 		}
-
 		var queryEndpoint = baseURL + "order";
-
 		params.put("symbol", symbol);
 		params = addTimeStampIfAbsentAndSignRequest(params);
-		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params);
+		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.GET);
 		var response = SEND(request);
 		return responseBodyToObject(response.body(), Order.class);
 	}
@@ -221,5 +217,20 @@ public class HttpBinanceApi implements BinanceApi {
 				throw new IllegalArgumentException(Integer.toString(i) + " argument is illegal. Should not be a NULL");
 			}
 		}
+	}
+
+	@Override
+	public Order newOrder(String symbol, OrderSide orderSide, OrderType orderType, Map<String, String> params)
+			throws RequestLimitException {
+		checkArguments(symbol, orderSide, orderType, params);
+		var queryEndpoint = baseURL + "order";
+		params.put("symbol", symbol);
+		params.put("side", orderSide.toString());
+		params.put("type", orderType.toString());
+		params.put("newOrderRespType", OrderResponse.RESULT.toString());
+		params = addTimeStampIfAbsentAndSignRequest(params);
+		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.POST);
+		var response = SEND(request);
+		return responseBodyToObject(response.body(), Order.class);
 	}
 }
