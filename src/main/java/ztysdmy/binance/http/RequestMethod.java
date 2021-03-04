@@ -17,7 +17,7 @@ public enum RequestMethod {
 	
 	private Function<HttpRequest.Builder, HttpRequest.Builder> httpMethod;
 	
-	public Function<HttpRequest.Builder, HttpRequest.Builder> builderWithMethod() {
+	public Function<HttpRequest.Builder, HttpRequest.Builder> setRequestMethodForBuilder() {
 		return this.httpMethod;
 	}
 }

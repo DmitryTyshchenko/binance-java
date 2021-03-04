@@ -45,7 +45,7 @@ class HttpUtility {
 					requestBuilder = requestBuilder.header(entry.getKey(), entry.getValue());
 				}
 			}
-			return requestMethod.builderWithMethod().apply(requestBuilder).build();
+			return requestMethod.setRequestMethodForBuilder().apply(requestBuilder).build();
 		};
 
 		return helper(() -> buildRequest.doAction());
