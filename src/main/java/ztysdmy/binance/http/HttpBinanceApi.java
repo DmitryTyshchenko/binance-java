@@ -233,4 +233,20 @@ public class HttpBinanceApi implements BinanceApi {
 		var response = SEND(request);
 		return responseBodyToObject(response.body(), Order.class);
 	}
+
+	@Override
+	public Order cancelOrder(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException {
+		checkArguments(symbol, params);
+
+		if (params.get("orderId") == null && params.get("origClientOrderId") == null) {
+
+			throw new IllegalArgumentException("Either orderId or origClientOrderId must be sent");
+		}
+
+		var queryEndpoint = baseURL + "order";
+		params = addTimeStampIfAbsentAndSignRequest(params);
+		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.DELETE);
+		var response = SEND(request);
+		return responseBodyToObject(response.body(), Order.class);
+	}
 }

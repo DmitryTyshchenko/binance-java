@@ -136,4 +136,14 @@ public interface BinanceApi {
 	 */
 	
 	Order newOrder(String symbol, OrderSide orderSide, OrderType orderType, Map<String, String> params) throws RequestLimitException, BinanceException;
+	
+	/**
+	 * Cancel an active order.
+	 * @param symbol
+	 * @param params
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	Order cancelOrder(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException;
 }
