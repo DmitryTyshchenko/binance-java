@@ -34,7 +34,7 @@ import static ztysdmy.binance.http.Utility.*;
 
 public class HttpBinanceApi implements BinanceApi {
 
-	private String baseURL = "https://www.binance.com/api/v3/";
+	private String baseURL = "https://api.binance.com/api/v3/";
 
 	private String apiKey = "";
 	private String secretKey = "";

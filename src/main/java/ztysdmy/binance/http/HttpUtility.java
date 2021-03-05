@@ -55,8 +55,8 @@ class HttpUtility {
 		var response = helper(() -> HttpClient.newBuilder().build().send(request, BodyHandlers.ofString()));
 
 		if (response.statusCode() == 429 || response.statusCode() == 418) {
-			// TODO get retry After from header
-			throw new RequestLimitException(response.statusCode(), 10000);
+			//get retry After from header
+			throw new RequestLimitException(response.statusCode(), getRetryAfter(response));
 		}
 
 		if (response.statusCode() != 200) {
@@ -65,6 +65,10 @@ class HttpUtility {
 		return response;
 	}
 
+	private static long getRetryAfter(HttpResponse<String> response) {
+		return Long.parseLong(response.headers().firstValue("Retry-After").orElseGet(()->"1000"));
+	}
+	
 	static BinanceException createException(int code, String body) {
 		try {
 			// in case of Binance specific exception

@@ -100,7 +100,7 @@ public class BinanceHttpTest {
 	public void getAllPrices() throws Exception {
 
 		BinanceApi api = new HttpBinanceApi();
-		// System.out.println(api.allPrices());
+		 System.out.println(api.allPrices());
 
 	}
 
@@ -125,7 +125,7 @@ public class BinanceHttpTest {
 		}
 	}
 	
-	//@Test
+	@Test
 	public void testOrder() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi("", 
@@ -152,7 +152,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testCancelOrder() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi("", 
