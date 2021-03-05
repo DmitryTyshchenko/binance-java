@@ -10,6 +10,8 @@ import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.http.HttpBinanceApi;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.OrderResponse;
+import ztysdmy.binance.model.OrderSide;
+import ztysdmy.binance.model.OrderType;
 
 public class BinanceHttpTest {
 
@@ -88,7 +90,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testPrice() throws Exception {
 		BinanceApi api = new HttpBinanceApi();
 		System.out.println(api.price("BTCBUSD"));
@@ -135,6 +137,32 @@ public class BinanceHttpTest {
 
 		}
 	}
-	
+
+	//@Test 1905908156
+	public void testNewOrder() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi("", 
+					"");
+			var params = new HashMap<String, String>();
+			params.put("quantity", "0.001");
+			params.put("price", "35000");
+			System.out.println(api.newOrder("BTCBUSD", OrderSide.BUY, OrderType.LIMIT, params).toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
+
+	@Test
+	public void testCancelOrder() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi("", 
+					"");
+			var params = new HashMap<String, String>();
+			params.put("orderId", "1905908156");
+			System.out.println(api.cancelOrder("BTCBUSD", params).toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
 
 }

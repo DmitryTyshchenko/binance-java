@@ -25,6 +25,7 @@ import ztysdmy.binance.model.OrderSide;
 import ztysdmy.binance.model.OrderType;
 import ztysdmy.binance.model.PriceTicker;
 import ztysdmy.binance.model.TickerPriceChangeStatistics;
+import ztysdmy.binance.model.TimeInForce;
 import ztysdmy.binance.model.Trade;
 
 import static ztysdmy.binance.http.HttpUtility.*;
@@ -227,6 +228,7 @@ public class HttpBinanceApi implements BinanceApi {
 		params.put("symbol", symbol);
 		params.put("side", orderSide.toString());
 		params.put("type", orderType.toString());
+		params.computeIfAbsent("timeInForce", k->TimeInForce.GTC.toString());
 		params.put("newOrderRespType", OrderResponse.RESULT.toString());
 		params = addTimeStampIfAbsentAndSignRequest(params);
 		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.POST);
@@ -238,11 +240,11 @@ public class HttpBinanceApi implements BinanceApi {
 	public Order cancelOrder(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException {
 		checkArguments(symbol, params);
 
+		params.put("symbol", symbol);
 		if (params.get("orderId") == null && params.get("origClientOrderId") == null) {
 
 			throw new IllegalArgumentException("Either orderId or origClientOrderId must be sent");
 		}
-
 		var queryEndpoint = baseURL + "order";
 		params = addTimeStampIfAbsentAndSignRequest(params);
 		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.DELETE);
