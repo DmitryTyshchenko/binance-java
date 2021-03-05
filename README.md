@@ -10,3 +10,7 @@ BinanceApi api = new HttpBinanceApi();
 var price = api.price("BTCBUSD");
 System.out.println(price.toString());
 ```
+Output
+```java
+{"symbol":"BTCBUSD","price":48121.51000000}
+```
