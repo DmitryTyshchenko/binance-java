@@ -24,4 +24,4 @@ ETH: 0x5e4682fd90f2b26147cc9965bcebb950af893b3f
 
 BNB: bnb136ns6lfw4zs5hg4n85vdthaad7hq5m4gtkgf23
 
-BNB MEMO:
+BNB MEMO: 101919179
