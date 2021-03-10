@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ztysdmy.binance.model.AggTradeData;
 import ztysdmy.binance.model.AvgPrice;
+import ztysdmy.binance.model.ExchangeInfo;
 import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
@@ -146,4 +147,12 @@ public interface BinanceApi {
 	 * @throws BinanceException
 	 */
 	Order cancelOrder(String symbol, Map<String, String> params) throws RequestLimitException, BinanceException;
+	
+	/**
+	 * Current exchange trading rules and symbol information
+	 * @return
+	 * @throws RequestLimitException
+	 * @throws BinanceException
+	 */
+	ExchangeInfo exchangeInfo() throws RequestLimitException, BinanceException;
 }

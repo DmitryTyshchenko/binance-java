@@ -16,6 +16,7 @@ import ztysdmy.binance.BinanceException;
 import ztysdmy.binance.RequestLimitException;
 import ztysdmy.binance.model.AggTradeData;
 import ztysdmy.binance.model.AvgPrice;
+import ztysdmy.binance.model.ExchangeInfo;
 import ztysdmy.binance.model.KLine;
 import ztysdmy.binance.model.KlineInterval;
 import ztysdmy.binance.model.Order;
@@ -206,7 +207,6 @@ public class HttpBinanceApi implements BinanceApi {
 	
 	private <T> T executeUnsignedRequest(String queryEndpoint, Map<String, String> params, Class<T> clazz) 
 			throws RequestLimitException {
-		
 		var response = createUnsignedGetRequestAndSend(queryEndpoint, params);
 		return responseBodyToObject(response.body(), clazz);
 	}
@@ -250,5 +250,11 @@ public class HttpBinanceApi implements BinanceApi {
 		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.DELETE);
 		var response = SEND(request);
 		return responseBodyToObject(response.body(), Order.class);
+	}
+
+	@Override
+	public ExchangeInfo exchangeInfo() throws RequestLimitException, BinanceException {
+		var queryEndpoint = baseURL+"exchangeInfo";
+		return executeUnsignedRequest(queryEndpoint, new HashMap<String, String>(), ExchangeInfo.class);
 	}
 }

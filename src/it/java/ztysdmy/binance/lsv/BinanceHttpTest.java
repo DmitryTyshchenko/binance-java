@@ -37,7 +37,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void testTickerPriceChangeStatistics() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
@@ -47,7 +47,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void testBookTicker() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
@@ -57,8 +57,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	
-	//@Test
+	// @Test
 	public void testAvgPrice() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
@@ -79,7 +78,7 @@ public class BinanceHttpTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void testKlines() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi();
@@ -93,14 +92,15 @@ public class BinanceHttpTest {
 	//@Test
 	public void testPrice() throws Exception {
 		BinanceApi api = new HttpBinanceApi();
-		System.out.println(api.price("BTCBUSD"));
+		var price = api.price("BTCBUSD");
+		System.out.println(price.toString());
 	}
 
 	// @Test
 	public void getAllPrices() throws Exception {
 
 		BinanceApi api = new HttpBinanceApi();
-		 System.out.println(api.allPrices());
+		System.out.println(api.allPrices());
 
 	}
 
@@ -114,8 +114,8 @@ public class BinanceHttpTest {
 		}
 	}
 
-	//"orderId":1798255236,"orderListId":-1,"clientOrderId":"and_64b9e6ef2fce4860a7a042c0ccbff529"
-	//@Test
+	// "orderId":1798255236,"orderListId":-1,"clientOrderId":"and_64b9e6ef2fce4860a7a042c0ccbff529"
+	// @Test
 	public void openOrders() throws Exception {
 		try {
 			BinanceApi api = new HttpBinanceApi("", "");
@@ -124,12 +124,11 @@ public class BinanceHttpTest {
 
 		}
 	}
-	
-	@Test
+
+	// @Test
 	public void testOrder() throws Exception {
 		try {
-			BinanceApi api = new HttpBinanceApi("", 
-					"");
+			BinanceApi api = new HttpBinanceApi("", "");
 			var params = new HashMap<String, String>();
 			params.put("orderId", "1798255236");
 			System.out.println(api.order("BTCBUSD", params).toString());
@@ -138,11 +137,10 @@ public class BinanceHttpTest {
 		}
 	}
 
-	//@Test 1905908156
+	// @Test 1905908156
 	public void testNewOrder() throws Exception {
 		try {
-			BinanceApi api = new HttpBinanceApi("", 
-					"");
+			BinanceApi api = new HttpBinanceApi("", "");
 			var params = new HashMap<String, String>();
 			params.put("quantity", "0.001");
 			params.put("price", "35000");
@@ -152,14 +150,23 @@ public class BinanceHttpTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void testCancelOrder() throws Exception {
 		try {
-			BinanceApi api = new HttpBinanceApi("", 
-					"");
+			BinanceApi api = new HttpBinanceApi("", "");
 			var params = new HashMap<String, String>();
 			params.put("orderId", "1905908156");
 			System.out.println(api.cancelOrder("BTCBUSD", params).toString());
+		} catch (RequestLimitException e) {
+
+		}
+	}
+
+	@Test
+	public void testExchangeInfo() throws Exception {
+		try {
+			BinanceApi api = new HttpBinanceApi("", "");
+			System.out.println(api.exchangeInfo().toString());
 		} catch (RequestLimitException e) {
 
 		}
