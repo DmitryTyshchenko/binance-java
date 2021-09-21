@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 public class Order extends BinanceObject {
 
 	private String symbol;
-	private int orderId;
-	private int orderListId;
+	private long orderId;
+	private long orderListId;
 	private String clientOrderId;
 	private BigDecimal price;
 	private BigDecimal origQty;
@@ -28,13 +28,13 @@ public class Order extends BinanceObject {
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}
-	public int getOrderId() {
+	public long getOrderId() {
 		return orderId;
 	}
 	public void setOrderId(int orderId) {
 		this.orderId = orderId;
 	}
-	public int getOrderListId() {
+	public long getOrderListId() {
 		return orderListId;
 	}
 	public void setOrderListId(int orderListId) {

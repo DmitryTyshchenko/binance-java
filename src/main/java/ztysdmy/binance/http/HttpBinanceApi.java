@@ -228,7 +228,7 @@ public class HttpBinanceApi implements BinanceApi {
 		params.put("symbol", symbol);
 		params.put("side", orderSide.toString());
 		params.put("type", orderType.toString());
-		params.computeIfAbsent("timeInForce", k->TimeInForce.GTC.toString());
+		//params.computeIfAbsent("timeInForce", k->TimeInForce.GTC.toString());
 		params.put("newOrderRespType", OrderResponse.RESULT.toString());
 		params = addTimeStampIfAbsentAndSignRequest(params);
 		var request = REQUEST(queryEndpoint, signedHeader(apiKey), params, RequestMethod.POST);
